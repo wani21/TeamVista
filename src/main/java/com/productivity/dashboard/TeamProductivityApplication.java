@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class TeamProductivityApplication {
 
     public static void main(String[] args) {
+
         SpringApplication.run(TeamProductivityApplication.class, args);
+        System.out.println("This Works :) !!");
     }
 }
