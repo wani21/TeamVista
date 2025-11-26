@@ -1,0 +1,67 @@
+# -------------------------
+# IntelliJ IDEA / JetBrains
+# -------------------------
+.idea/
+out/
+*.iml
+*.ipr
+*.iws
+/shelf/
+/workspace.xml
+
+# -------------------------
+# Java / Maven / Spring Boot
+# -------------------------
+target/
+*.jar
+*.war
+*.ear
+*.class
+*.log
+*.tmp
+*.lock
+
+# Maven specific
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+
+# -------------------------
+# Node / React / Vite (Frontend)
+# -------------------------
+node_modules/
+frontend/node_modules/
+frontend/dist/
+dist/
+build/
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# -------------------------
+# OS Files
+# -------------------------
+.DS_Store
+Thumbs.db
+
+# -------------------------
+# Logs
+# -------------------------
+*.log
+logs/
+*.out
+
+# -------------------------
+# Misc
+# -------------------------
+*.swp
+*.swo

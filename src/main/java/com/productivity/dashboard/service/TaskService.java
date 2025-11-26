@@ -21,5 +21,13 @@ public interface TaskService {
     
     Task completeTask(Long id);
     
+    void deleteTask(Long id);
+    
+    List<Task> searchTasks(String keyword);
+    
     DashboardSummary getDashboardSummary();
+    
+    com.productivity.dashboard.dto.EnhancedDashboardSummary getEnhancedDashboardSummary();
+    
+    com.productivity.dashboard.dto.UserTaskStats getUserTaskStats(Long userId);
 }

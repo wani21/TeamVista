@@ -34,19 +34,28 @@ A Spring Boot REST API for managing team productivity with task management and u
 
 ## API Endpoints
 
-### Authentication
+### Authentication (Public)
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - Login and get JWT token
 
-### Tasks
+### Tasks (Protected)
 - `POST /api/tasks` - Create task (MANAGER only)
 - `GET /api/tasks` - List tasks (with optional filters)
 - `GET /api/tasks/{id}` - Get task details
+- `GET /api/tasks/search?keyword=` - Search tasks by keyword
 - `PUT /api/tasks/{id}` - Update task
 - `PUT /api/tasks/{id}/complete` - Mark task as completed
+- `DELETE /api/tasks/{id}` - Delete task (MANAGER only)
 
-### Dashboard
-- `GET /api/dashboard/summary` - Get analytics summary
+### Users (Protected)
+- `GET /api/users` - Get all users
+- `GET /api/users/me` - Get current user profile
+- `GET /api/users/{id}` - Get user by ID
+- `GET /api/users/{id}/stats` - Get user task statistics
+
+### Dashboard (Protected)
+- `GET /api/dashboard/summary` - Get basic analytics summary
+- `GET /api/dashboard/enhanced` - Get enhanced dashboard with detailed stats
 
 ## Sample Data
 

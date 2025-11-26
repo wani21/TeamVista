@@ -26,4 +26,18 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     
     @Query("SELECT COUNT(t) FROM Task t")
     long countTotalTasks();
+    
+    List<Task> findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String title, String description);
+    
+    @Query("SELECT t FROM Task t WHERE t.assignedTo.id = :userId")
+    List<Task> findByAssignedToId(Long userId);
+    
+    @Query("SELECT t FROM Task t ORDER BY t.dueDate ASC")
+    List<Task> findAllOrderByDueDateAsc();
+    
+    @Query("SELECT t FROM Task t ORDER BY t.priority DESC")
+    List<Task> findAllOrderByPriorityDesc();
+    
+    @Query("SELECT t FROM Task t ORDER BY t.createdAt DESC")
+    List<Task> findAllOrderByCreatedAtDesc();
 }

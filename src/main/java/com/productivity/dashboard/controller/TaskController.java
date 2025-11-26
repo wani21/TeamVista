@@ -113,4 +113,27 @@ public class TaskController {
         Task task = taskService.completeTask(id);
         return ResponseEntity.ok(ApiResponse.success("Task completed successfully", task));
     }
+    
+    /**
+     * Delete task (MANAGER only)
+     * DELETE /api/tasks/1
+     * Response: {"success": true, "message": "Task deleted successfully"}
+     */
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<ApiResponse<Void>> deleteTask(@PathVariable Long id) {
+        taskService.deleteTask(id);
+        return ResponseEntity.ok(ApiResponse.success("Task deleted successfully", null));
+    }
+    
+    /**
+     * Search tasks by keyword
+     * GET /api/tasks/search?keyword=feature
+     * Response: {"success": true, "message": "Tasks found", "data": [...]}
+     */
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<Task>>> searchTasks(@RequestParam String keyword) {
+        List<Task> tasks = taskService.searchTasks(keyword);
+        return ResponseEntity.ok(ApiResponse.success("Tasks found", tasks));
+    }
 }

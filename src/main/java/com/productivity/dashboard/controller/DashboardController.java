@@ -2,6 +2,7 @@ package com.productivity.dashboard.controller;
 
 import com.productivity.dashboard.dto.ApiResponse;
 import com.productivity.dashboard.dto.DashboardSummary;
+import com.productivity.dashboard.dto.EnhancedDashboardSummary;
 import com.productivity.dashboard.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,5 +36,16 @@ public class DashboardController {
     public ResponseEntity<ApiResponse<DashboardSummary>> getDashboardSummary() {
         DashboardSummary summary = taskService.getDashboardSummary();
         return ResponseEntity.ok(ApiResponse.success("Dashboard summary retrieved successfully", summary));
+    }
+    
+    /**
+     * Get enhanced dashboard summary with detailed analytics
+     * GET /api/dashboard/enhanced
+     * Response: Enhanced dashboard with user stats, overdue tasks, high priority tasks, etc.
+     */
+    @GetMapping("/enhanced")
+    public ResponseEntity<ApiResponse<EnhancedDashboardSummary>> getEnhancedDashboardSummary() {
+        EnhancedDashboardSummary summary = taskService.getEnhancedDashboardSummary();
+        return ResponseEntity.ok(ApiResponse.success("Enhanced dashboard retrieved successfully", summary));
     }
 }
