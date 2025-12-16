@@ -1,6 +1,6 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FiHome, FiCheckSquare, FiLogOut, FiUser, FiMenu, FiX } from 'react-icons/fi';
+import { FiHome, FiCheckSquare, FiLogOut, FiUser, FiMenu, FiX, FiUsers, FiTrendingUp, FiSettings, FiBarChart2 } from 'react-icons/fi';
 import { useState } from 'react';
 
 const Layout = () => {
@@ -16,7 +16,10 @@ const Layout = () => {
 
   const navItems = [
     { path: '/dashboard', icon: FiHome, label: 'Dashboard' },
-    { path: '/tasks', icon: FiCheckSquare, label: 'Tasks' },
+    { path: '/tasks', icon: FiCheckSquare, label: 'My Tasks' },
+    { path: '/team', icon: FiUsers, label: 'Team Members' },
+    { path: '/analytics', icon: FiTrendingUp, label: 'Analytics' },
+    { path: '/profile', icon: FiUser, label: 'Profile' },
   ];
 
   const isActive = (path) => location.pathname === path;

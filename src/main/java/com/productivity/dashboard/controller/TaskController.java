@@ -10,17 +10,23 @@ import com.productivity.dashboard.model.TaskStatus;
 import com.productivity.dashboard.model.User;
 import com.productivity.dashboard.service.AuthService;
 import com.productivity.dashboard.service.TaskService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
+
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
+    
+    private static final Logger logger = LoggerFactory.getLogger(TaskController.class);
     
     @Autowired
     private TaskService taskService;

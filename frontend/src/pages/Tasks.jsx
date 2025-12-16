@@ -7,6 +7,8 @@ import {
 } from 'react-icons/fi';
 import TaskModal from '../components/TaskModal';
 import TaskCard from '../components/TaskCard';
+import Toast from '../components/Toast';
+import CompleteTaskModal from '../components/CompleteTaskModal';
 
 const Tasks = () => {
   const { user, isManager } = useAuth();
@@ -18,18 +20,23 @@ const Tasks = () => {
   const [filterPriority, setFilterPriority] = useState('');
   const [filterAssignee, setFilterAssignee] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [showCompleteModal, setShowCompleteModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [taskToComplete, setTaskToComplete] = useState(null);
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
+  const [toast, setToast] = useState(null);
 
   useEffect(() => {
     fetchTasks();
     fetchUsers();
-  }, []);
+  }, [user]);
 
   const fetchTasks = async () => {
     try {
       setLoading(true);
-      const response = await taskAPI.getAll();
+      // If employee, only fetch their tasks. If manager, fetch all tasks.
+      const params = isManager() ? {} : { assignedTo: user.id };
+      const response = await taskAPI.getAll(params);
       setTasks(response.data.data);
     } catch (error) {
       console.error('Failed to fetch tasks:', error);
@@ -74,21 +81,36 @@ const Tasks = () => {
     if (!window.confirm('Are you sure you want to delete this task?')) return;
     
     try {
+      const taskToDelete = tasks.find(t => t.id === taskId);
       await taskAPI.delete(taskId);
+      setToast({ message: `Task "${taskToDelete?.title}" deleted successfully!`, type: 'success' });
       fetchTasks();
     } catch (error) {
       console.error('Failed to delete task:', error);
-      alert('Failed to delete task');
+      setToast({ message: 'Failed to delete task', type: 'error' });
     }
   };
 
-  const handleCompleteTask = async (taskId) => {
+  const handleCompleteTask = (task) => {
+    setTaskToComplete(task);
+    setShowCompleteModal(true);
+  };
+
+  const submitTaskCompletion = async (taskId, completionData) => {
     try {
+      const task = tasks.find(t => t.id === taskId);
+      // For now, just complete the task. Later we'll save completion notes to backend
       await taskAPI.complete(taskId);
+      setToast({ 
+        message: `Task "${task?.title}" marked as completed! 🎉\nTime spent: ${completionData.hoursSpent} hours`, 
+        type: 'success' 
+      });
+      setShowCompleteModal(false);
+      setTaskToComplete(null);
       fetchTasks();
     } catch (error) {
       console.error('Failed to complete task:', error);
-      alert('Failed to complete task');
+      setToast({ message: 'Failed to complete task', type: 'error' });
     }
   };
 
@@ -96,6 +118,10 @@ const Tasks = () => {
     setShowModal(false);
     setSelectedTask(null);
     if (refresh) fetchTasks();
+  };
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
   };
 
   // Filter tasks
@@ -295,6 +321,28 @@ const Tasks = () => {
           task={selectedTask}
           users={users}
           onClose={handleModalClose}
+          onSuccess={showToast}
+        />
+      )}
+
+      {/* Complete Task Modal */}
+      {showCompleteModal && taskToComplete && (
+        <CompleteTaskModal
+          task={taskToComplete}
+          onClose={() => {
+            setShowCompleteModal(false);
+            setTaskToComplete(null);
+          }}
+          onSubmit={submitTaskCompletion}
+        />
+      )}
+
+      {/* Toast Notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
         />
       )}
     </div>

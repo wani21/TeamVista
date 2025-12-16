@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { taskAPI } from '../services/api';
-import { FiX, FiSave } from 'react-icons/fi';
+import { FiX, FiSave, FiUser, FiCalendar } from 'react-icons/fi';
 
-const TaskModal = ({ task, users, onClose }) => {
+const TaskModal = ({ task, users, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -13,6 +13,7 @@ const TaskModal = ({ task, users, onClose }) => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
     if (task) {
@@ -24,11 +25,21 @@ const TaskModal = ({ task, users, onClose }) => {
         assignedToId: task.assignedTo?.id || '',
         status: task.status || 'PENDING',
       });
+      if (task.assignedTo) {
+        setSelectedUser(task.assignedTo);
+      }
     }
   }, [task]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    
+    // Update selected user when assignee changes
+    if (name === 'assignedToId') {
+      const user = users.find(u => u.id === parseInt(value));
+      setSelectedUser(user);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -37,16 +48,31 @@ const TaskModal = ({ task, users, onClose }) => {
     setLoading(true);
 
     try {
+      const assignedUser = users.find(u => u.id === parseInt(formData.assignedToId));
+      
       if (task) {
         // Update existing task
         await taskAPI.update(task.id, formData);
+        if (onSuccess) {
+          onSuccess(`Task "${formData.title}" updated successfully!`, 'success');
+        }
       } else {
         // Create new task
         await taskAPI.create(formData);
+        if (onSuccess) {
+          onSuccess(
+            `Task "${formData.title}" created and assigned to ${assignedUser?.name}!`,
+            'success'
+          );
+        }
       }
       onClose(true); // true indicates refresh needed
     } catch (err) {
-      setError(err.response?.data?.message || 'Operation failed');
+      const errorMsg = err.response?.data?.message || 'Operation failed';
+      setError(errorMsg);
+      if (onSuccess) {
+        onSuccess(errorMsg, 'error');
+      }
     } finally {
       setLoading(false);
     }
@@ -157,6 +183,7 @@ const TaskModal = ({ task, users, onClose }) => {
                 value={formData.dueDate}
                 onChange={handleChange}
                 className="input-field"
+                min={new Date().toISOString().split('T')[0]}
               />
             </div>
 
@@ -180,6 +207,25 @@ const TaskModal = ({ task, users, onClose }) => {
               </select>
             </div>
           </div>
+
+          {/* Assignment Preview */}
+          {selectedUser && (
+            <div className="p-4 bg-primary-50 border border-primary-200 rounded-lg">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-accent-500 rounded-full flex items-center justify-center text-white font-semibold">
+                  {selectedUser.name.charAt(0).toUpperCase()}
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-primary-900">
+                    This task will be assigned to:
+                  </p>
+                  <p className="text-sm text-primary-700">
+                    <strong>{selectedUser.name}</strong> ({selectedUser.email})
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Actions */}
           <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200">

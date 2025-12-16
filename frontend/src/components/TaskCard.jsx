@@ -2,9 +2,9 @@ import { FiEdit2, FiTrash2, FiCheckCircle, FiCalendar, FiUser, FiClock } from 'r
 import { format, isPast, isToday } from 'date-fns';
 
 const TaskCard = ({ task, onEdit, onDelete, onComplete, isManager, currentUserId }) => {
-  const canEdit = isManager || task.assignedTo?.id === currentUserId;
+  const canEdit = isManager; // Only managers can edit
   const canDelete = isManager;
-  const canComplete = canEdit && task.status !== 'COMPLETED';
+  const canComplete = (isManager || task.assignedTo?.id === currentUserId) && task.status !== 'COMPLETED';
 
   const priorityColors = {
     HIGH: 'badge-high',
@@ -86,11 +86,11 @@ const TaskCard = ({ task, onEdit, onDelete, onComplete, isManager, currentUserId
       <div className="flex items-center space-x-2 pt-4 border-t border-gray-200">
         {canComplete && (
           <button
-            onClick={() => onComplete(task.id)}
+            onClick={() => onComplete(task)}
             className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-success-50 text-success-700 hover:bg-success-100 rounded-lg transition-colors duration-200 text-sm font-medium"
           >
             <FiCheckCircle size={16} />
-            <span>Complete</span>
+            <span>Mark Complete</span>
           </button>
         )}
         {canEdit && (

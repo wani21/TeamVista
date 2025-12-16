@@ -5,17 +5,21 @@ import com.productivity.dashboard.dto.LoginRequest;
 import com.productivity.dashboard.dto.RegisterRequest;
 import com.productivity.dashboard.model.User;
 import com.productivity.dashboard.service.AuthService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+    
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     
     @Autowired
     private AuthService authService;
@@ -28,8 +32,17 @@ public class AuthController {
      */
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<User>> register(@Valid @RequestBody RegisterRequest request) {
-        User user = authService.register(request);
-        return ResponseEntity.ok(ApiResponse.success("User registered successfully", user));
+        logger.info("POST /api/auth/register - Attempting to register user with email: {}", request.getEmail());
+        
+        try {
+            User user = authService.register(request);
+            logger.info("User registration successful - ID: {}, Email: {}, Role: {}", 
+                user.getId(), user.getEmail(), user.getRole());
+            return ResponseEntity.ok(ApiResponse.success("User registered successfully", user));
+        } catch (Exception e) {
+            logger.error("User registration failed for email: {} - Error: {}", request.getEmail(), e.getMessage());
+            throw e;
+        }
     }
     
     /**
@@ -40,9 +53,17 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Map<String, String>>> login(@Valid @RequestBody LoginRequest request) {
-        String token = authService.login(request);
-        Map<String, String> response = new HashMap<>();
-        response.put("token", token);
-        return ResponseEntity.ok(ApiResponse.success("Login successful", response));
+        logger.info("POST /api/auth/login - Login attempt for email: {}", request.getEmail());
+        
+        try {
+            String token = authService.login(request);
+            Map<String, String> response = new HashMap<>();
+            response.put("token", token);
+            logger.info("Login successful for user: {}", request.getEmail());
+            return ResponseEntity.ok(ApiResponse.success("Login successful", response));
+        } catch (Exception e) {
+            logger.warn("Login failed for email: {} - Error: {}", request.getEmail(), e.getMessage());
+            throw e;
+        }
     }
 }

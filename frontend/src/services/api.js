@@ -63,6 +63,7 @@ export const userAPI = {
 export const dashboardAPI = {
   getSummary: () => api.get('/dashboard/summary'),
   getEnhanced: () => api.get('/dashboard/enhanced'),
+  getPersonal: () => api.get('/dashboard/personal'),
 };
 
 export default api;

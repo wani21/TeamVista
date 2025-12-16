@@ -6,6 +6,8 @@ import com.productivity.dashboard.model.User;
 import com.productivity.dashboard.service.AuthService;
 import com.productivity.dashboard.service.TaskService;
 import com.productivity.dashboard.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
+    
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     
     @Autowired
     private UserService userService;
@@ -32,7 +36,9 @@ public class UserController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse<List<User>>> getAllUsers() {
+        logger.info("GET /api/users");
         List<User> users = userService.getAllUsers();
+        logger.debug("Retrieved {} users", users.size());
         return ResponseEntity.ok(ApiResponse.success("Users retrieved successfully", users));
     }
     
@@ -43,7 +49,9 @@ public class UserController {
      */
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<User>> getCurrentUser() {
+        logger.info("GET /api/users/me");
         User user = authService.getCurrentUser();
+        logger.debug("Current user: {}", user.getEmail());
         return ResponseEntity.ok(ApiResponse.success("User profile retrieved", user));
     }
     

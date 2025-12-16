@@ -29,5 +29,7 @@ public interface TaskService {
     
     com.productivity.dashboard.dto.EnhancedDashboardSummary getEnhancedDashboardSummary();
     
+    com.productivity.dashboard.dto.EnhancedDashboardSummary getPersonalDashboard();
+    
     com.productivity.dashboard.dto.UserTaskStats getUserTaskStats(Long userId);
 }

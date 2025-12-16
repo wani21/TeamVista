@@ -8,17 +8,20 @@ import {
 import { BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user, isManager } = useAuth();
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchDashboard();
-  }, []);
+  }, [user]);
 
   const fetchDashboard = async () => {
     try {
-      const response = await dashboardAPI.getEnhanced();
+      // Managers see full team dashboard, Employees see personal dashboard
+      const response = isManager() 
+        ? await dashboardAPI.getEnhanced()
+        : await dashboardAPI.getPersonal();
       setDashboard(response.data.data);
     } catch (error) {
       console.error('Failed to fetch dashboard:', error);
